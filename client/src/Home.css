@@ -1,4 +1,4 @@
-/* stylehome.css */
+stylehome.css
 
 * {
   margin: 0;
@@ -9,7 +9,7 @@
 html, body {
   height: 100%;
   font-family: "Segoe UI", sans-serif;
-  background: linear-gradient(to right, #e0f7fa, #cfd8dc); /* new soft background */
+  background: linear-gradient(to right, #e0f7fa, #cfd8dc); 
 }
 
 /* Main container */

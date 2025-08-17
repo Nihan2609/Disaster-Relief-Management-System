@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, }
+import { BrowserRouter, Routes, Route}
   from "react-router-dom";
 import DisasterZones from "./pages/Zone/DisasterZones";
 import AddZone from "./pages/Zone/AddZone";
@@ -77,12 +77,6 @@ function App() {
           <Route path="/zone-info" element={<ZoneInfo />} />
           <Route path="/distribute" element={<DistributionForm />} />
           <Route path="/unfiled" element={<UnifiedZoneManagement />} />
-
-
-
-
-
-
 
         </Routes>
       </BrowserRouter>
