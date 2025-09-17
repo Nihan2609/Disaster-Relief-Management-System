@@ -16,8 +16,8 @@ app.use(cors());
 const db = mysql.createConnection({
   host: "localhost",
   user: "root",
-  password: "1122",
-  database: "disaster_relief"
+  password: "212001",
+  database: "disaster_relief_management"
 });
 
 // ============ AUTH ROUTES ============
