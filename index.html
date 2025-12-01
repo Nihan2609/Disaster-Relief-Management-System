@@ -1,0 +1,84 @@
+// src/pages/PrototypeDashboard.jsx
+import React from "react";
+
+const PrototypeDashboard = () => {
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-100 text-gray-800 font-sans">
+      {/* Header */}
+      <header className="bg-white shadow-md p-4 flex justify-between items-center">
+        <h1 className="text-2xl font-bold text-blue-700">DRMS Dashboard</h1>
+        <nav className="space-x-6">
+          <a href="#" className="hover:text-blue-600">Home</a>
+          <a href="#" className="hover:text-blue-600">Zones</a>
+          <a href="#" className="hover:text-blue-600">Volunteers</a>
+          <a href="#" className="hover:text-blue-600">Resources</a>
+          <a href="#" className="hover:text-blue-600">Profile</a>
+        </nav>
+      </header>
+
+      {/* Hero Section */}
+      <section className="p-10 text-center">
+        <h2 className="text-4xl font-extrabold text-blue-800">
+          Disaster Relief Resource Management
+        </h2>
+        <p className="mt-3 text-gray-600 text-lg">
+          Monitor disaster zones, manage volunteers, and allocate resources effectively.
+        </p>
+      </section>
+
+      {/* Summary Cards */}
+      <section className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 px-10 mb-10">
+        {[
+          { title: "Zones", value: "12", color: "bg-blue-100 text-blue-700" },
+          { title: "Volunteers", value: "56", color: "bg-green-100 text-green-700" },
+          { title: "Resources", value: "32", color: "bg-yellow-100 text-yellow-700" },
+          { title: "Active Disasters", value: "5", color: "bg-red-100 text-red-700" },
+        ].map((card, idx) => (
+          <div
+            key={idx}
+            className={`p-6 rounded-2xl shadow-md ${card.color} text-center font-bold`}
+          >
+            <h3 className="text-xl">{card.title}</h3>
+            <p className="text-3xl mt-2">{card.value}</p>
+          </div>
+        ))}
+      </section>
+
+      {/* Disaster Zone Overview */}
+      <section className="px-10 mb-10">
+        <h3 className="text-2xl font-bold mb-4">Disaster Zone Overview</h3>
+        <table className="w-full bg-white shadow-md rounded-lg overflow-hidden">
+          <thead className="bg-blue-600 text-white">
+            <tr>
+              <th className="p-3 text-left">Zone</th>
+              <th className="p-3 text-left">Disaster</th>
+              <th className="p-3 text-left">Severity</th>
+              <th className="p-3 text-left">Last Update</th>
+            </tr>
+          </thead>
+          <tbody>
+            {[
+              { zone: "Dhaka", type: "Flood", severity: "High", update: "Today" },
+              { zone: "Chittagong", type: "Cyclone", severity: "Medium", update: "Yesterday" },
+              { zone: "Sylhet", type: "Landslide", severity: "Low", update: "2 days ago" },
+            ].map((row, idx) => (
+              <tr key={idx} className="border-b hover:bg-blue-50">
+                <td className="p-3">{row.zone}</td>
+                <td className="p-3">{row.type}</td>
+                <td className="p-3">{row.severity}</td>
+                <td className="p-3">{row.update}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </section>
+
+      {/* Footer */}
+      <footer className="bg-gray-100 text-center py-6 mt-10 text-gray-600">
+        © 2025 DRMS | Disaster Relief Resource Management
+      </footer>
+    </div>
+  );
+};
+
+export default PrototypeDashboard;

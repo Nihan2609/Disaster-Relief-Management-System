@@ -45,38 +45,51 @@ const MakeDonation = () => {
   };
 
   return (
-    <div>
-      <h2>Make a Donation</h2>
-      <form onSubmit={handleSubmit}>
-        <label>Resource:</label>
-        <select
-          name="resourceId"
-          value={form.resourceId}
-          onChange={handleChange}
-          required
-        >
-          <option value="">-- Select Resource --</option>
-          {resources.map((r) => (
-            <option key={r.Resource_ID} value={r.Resource_ID}>
-              {r.Resource_Type} ({r.Unit})
-            </option>
-          ))}
-        </select>
+    <div className="min-h-screen bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center p-6">
+      <div className="bg-white rounded-3xl shadow-2xl p-8 w-full max-w-md transform hover:scale-105 transition-all duration-300">
+        <h2 className="text-3xl font-extrabold text-gray-800 mb-6 text-center">
+          🎁 Make a Donation
+        </h2>
+        <form onSubmit={handleSubmit} className="space-y-5">
+          <div>
+            <label className="block mb-2 font-medium text-gray-700">Resource</label>
+            <select
+              name="resourceId"
+              value={form.resourceId}
+              onChange={handleChange}
+              required
+              className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-purple-400 focus:outline-none"
+            >
+              <option value="">-- Select Resource --</option>
+              {resources.map((r) => (
+                <option key={r.Resource_ID} value={r.Resource_ID}>
+                  {r.Resource_Type} ({r.Unit})
+                </option>
+              ))}
+            </select>
+          </div>
 
-        <br />
-        <label>Quantity:</label>
-        <input
-          type="number"
-          name="quantity"
-          placeholder="Quantity"
-          value={form.quantity}
-          onChange={handleChange}
-          required
-        />
+          <div>
+            <label className="block mb-2 font-medium text-gray-700">Quantity</label>
+            <input
+              type="number"
+              name="quantity"
+              placeholder="Enter quantity"
+              value={form.quantity}
+              onChange={handleChange}
+              required
+              className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-purple-400 focus:outline-none"
+            />
+          </div>
 
-        <br />
-        <button type="submit">Donate</button>
-      </form>
+          <button
+            type="submit"
+            className="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 rounded-xl shadow-lg transition-transform transform hover:scale-105"
+          >
+            💖 Donate Now
+          </button>
+        </form>
+      </div>
     </div>
   );
 };

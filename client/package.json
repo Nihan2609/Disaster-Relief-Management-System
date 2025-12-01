@@ -16,6 +16,8 @@
     "react-scripts": "^5.0.1",
     "router-dom": "^3.0.3",
     "socket.io-client": "^4.8.1",
+    "tailwindcss-animate": "^1.0.7",
+    "vite": "^7.1.6",
     "web-vitals": "^2.1.4"
   },
   "scripts": {
@@ -45,6 +47,10 @@
     ]
   },
   "devDependencies": {
-    "gh-pages": "^6.3.0"
+    "@tailwindcss/postcss": "^4.1.13",
+    "autoprefixer": "^10.4.21",
+    "gh-pages": "^6.3.0",
+    "postcss": "^8.5.6",
+    "tailwindcss": "^3.4.17"
   }
 }

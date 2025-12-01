@@ -3,10 +3,6 @@ import mysql from "mysql2";
 import cors from "cors";
 
 
-
-
-
-
 // ============ App Initialization ============
 const app = express();
 app.use(express.json());
@@ -22,54 +18,58 @@ const db = mysql.createConnection({
 
 // ============ AUTH ROUTES ============
 // Admin / Volunteer / Donor Login
-app.post("/login", (req, res) => {
-  const { username, password, role } = req.body;
+// ============ AUTH ROUTES ============
 
-  if (role === "admin") {
-    if (username === "admin" && password === "admin123") {
-      return res.status(200).json({ message: "Admin login successful", role: "admin", id: 0 });
-    } else {
-      return res.status(401).json("Invalid admin credentials");
-    }
+app.post("/login", (req, res) => {
+  const { email, password } = req.body;
+
+
+  if (email === "admin@gmail.com" && password === "admin123") {
+    return res.status(200).json({ message: "Admin login successful", id: 0, role: "admin" });
   }
 
-  const table = role === "volunteer" ? "Volunteer" : "Donor";
-  const idField = role === "volunteer" ? "Volunteer_ID" : "Donor_ID";
-  const q = `SELECT * FROM ${table} WHERE Name = ? AND Contact_Info = ?`;
-
-  db.query(q, [username, password], (err, data) => {
+ 
+  const volunteerQuery = "SELECT Volunteer_ID, Name FROM Volunteer WHERE Email = ? AND Password = ?";
+  db.query(volunteerQuery, [email, password], (err, volData) => {
     if (err) return res.status(500).json("DB error");
-    if (data.length > 0) {
-      return res.status(200).json({
-        message: `${role[0].toUpperCase() + role.slice(1)} login successful`,
-        role,
-        id: data[0][idField]
-      });
-    } else {
-      return res.status(401).json(`Invalid ${role} credentials`);
+    if (volData.length > 0) {
+      return res.status(200).json({ message: "Volunteer login successful", id: volData[0].Volunteer_ID, role: "volunteer", name: volData[0].Name });
     }
+
+    
+    const donorQuery = "SELECT Donor_ID, Name FROM Donor WHERE Email = ? AND Password = ?";
+    db.query(donorQuery, [email, password], (err, donorData) => {
+      if (err) return res.status(500).json("DB error");
+      if (donorData.length > 0) {
+        return res.status(200).json({ message: "Donor login successful", id: donorData[0].Donor_ID, role: "donor", name: donorData[0].Name });
+      }
+
+      
+      return res.status(401).json("Invalid credentials");
+    });
   });
 });
 
-// Registration
-app.post("/register", (req, res) => {
-  const { name, contact, role, skill, isAnonymous } = req.body;
 
-  if (role === "volunteer") {
-    const q = "INSERT INTO Volunteer (Name, Contact_Info, Skill) VALUES (?, ?, ?)";
-    db.query(q, [name, contact, skill], (err) => {
-      if (err) return res.status(500).json("Volunteer registration failed");
-      return res.status(201).json("Volunteer registered");
-    });
-  } else if (role === "user") {
-    const q = "INSERT INTO Donor (Name, Contact_Info, Is_Anonymous) VALUES (?, ?, ?)";
-    db.query(q, [name, contact, isAnonymous], (err) => {
-      if (err) return res.status(500).json("User registration failed");
-      return res.status(201).json("User registered");
-    });
-  } else {
-    return res.status(400).json("Invalid role");
-  }
+// Registration
+// Volunteer Registration
+app.post("/register/volunteer", (req, res) => {
+  const { name, contact, email, password, skill,address } = req.body;
+  const q = "INSERT INTO Volunteer (Name, Contact_Info, Email, Password, Skill,address) VALUES (?, ?, ?, ?, ?,?)";
+  db.query(q, [name, contact, email, password, skill,address], (err) => {
+    if (err) return res.status(500).json("Volunteer registration failed");
+    return res.status(201).json("Volunteer registered");
+  });
+});
+
+// Donor Registration
+app.post("/register/donor", (req, res) => {
+  const { name, contact, email, password, isAnonymous } = req.body;
+  const q = "INSERT INTO Donor (Name, Contact_Info, Email, Password, Is_Anonymous) VALUES (?, ?, ?, ?, ?)";
+  db.query(q, [name, contact, email, password, isAnonymous || false], (err) => {
+    if (err) return res.status(500).json("Donor registration failed");
+    return res.status(201).json("Donor registered");
+  });
 });
 
 
@@ -544,6 +544,138 @@ app.get("/zones/assigned", (req, res) => {
       return res.status(500).json("Error fetching assigned zones: " + err);
     }
     res.json(data);
+  });
+});
+
+
+
+// -------------------- REPORT ROUTES --------------------
+
+// Create a new report
+app.post("/reports", (req, res) => {
+  const {
+    donorId,
+    volunteerId,
+    zoneId,
+    title,
+    description,
+    type,
+    district,
+    deaths,
+    casualties,
+    severity
+  } = req.body;
+
+  const q = `
+    INSERT INTO Reports 
+      (Donor_ID, Volunteer_ID, Zone_ID, Title, Description, Type, District, Deaths, Casualties, Severity)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+  `;
+
+  db.query(
+    q,
+    [
+      donorId || null,
+      volunteerId || null,
+      zoneId || null,
+      title,
+      description,
+      type || null,
+      district || null,
+      deaths || 0,
+      casualties || 0,
+      severity || "Low"
+    ],
+    (err) => {
+      if (err) return res.status(500).json("Failed to submit report: " + err);
+      res.status(201).json("Report submitted successfully");
+    }
+  );
+});
+
+// Get all reports
+app.get("/reports", (_, res) => {
+  const q = `
+    SELECT r.*, 
+           dz.Name AS Zone_Name, 
+           d.Name AS Donor_Name, 
+           v.Name AS Volunteer_Name
+    FROM Reports r
+    LEFT JOIN DisasterZone dz ON r.Zone_ID = dz.Zone_ID
+    LEFT JOIN Donor d ON r.Donor_ID = d.Donor_ID
+    LEFT JOIN Volunteer v ON r.Volunteer_ID = v.Volunteer_ID
+    ORDER BY r.Created_At DESC
+  `;
+
+  db.query(q, (err, data) => {
+    if (err) return res.status(500).json("Failed to fetch reports: " + err);
+    res.json(data);
+  });
+});
+
+// Update report (status or any other field)
+app.put("/reports/:id", (req, res) => {
+  const reportId = req.params.id;
+  const {
+    status,
+    type,
+    district,
+    deaths,
+    casualties,
+    severity,
+    resolvedAt
+  } = req.body;
+
+  const q = `
+    UPDATE Reports SET 
+      Status = ?, 
+      Type = ?, 
+      District = ?, 
+      Deaths = ?, 
+      Casualties = ?, 
+      Severity = ?, 
+      Resolved_At = ?
+    WHERE Report_ID = ?
+  `;
+
+  db.query(
+    q,
+    [
+      status || "pending",
+      type || null,
+      district || null,
+      deaths || 0,
+      casualties || 0,
+      severity || "Low",
+      resolvedAt || null,
+      reportId
+    ],
+    (err, result) => {
+      if (err) return res.status(500).json({ error: "Database error" });
+      if (result.affectedRows === 0)
+        return res.status(404).json({ error: "Report not found" });
+
+      // Fetch updated report
+      db.query("SELECT * FROM Reports WHERE Report_ID = ?", [reportId], (err, data) => {
+        if (err) return res.status(500).json({ error: "Failed to fetch updated report" });
+        res.json(data[0]);
+      });
+    }
+  );
+});
+
+// Delete report
+app.delete("/reports/:id", (req, res) => {
+  const reportId = req.params.id;
+  db.query("DELETE FROM Reports WHERE Report_ID = ?", [reportId], (err, result) => {
+    if (err) {
+      console.error("Delete error:", err);
+      return res.status(500).json({ message: "Internal server error" });
+    }
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ message: "Report not found" });
+    }
+    return res.status(200).json({ message: "Report deleted successfully" });
   });
 });
 

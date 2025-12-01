@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 
 const UserDashboard = () => {
   const [user, setUser] = useState(null);
@@ -26,110 +26,78 @@ const UserDashboard = () => {
     fetchUserData();
   }, [userId]);
 
-  if (!user) return <div>Loading your dashboard...</div>;
+  if (!user)
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-purple-500 to-blue-600 text-white text-xl font-semibold">
+        Loading your dashboard...
+      </div>
+    );
 
   return (
-    <div style={styles.container}>
-      <h1 style={styles.heading}>
-        Welcome, {user.Is_Anonymous ? "Valued Donor 🙏" : user.Name}
+    <div className="min-h-screen bg-gradient-to-br from-red-500 via-pink-500 to-indigo-600 text-white flex flex-col items-center p-6">
+      {/* Welcome */}
+      <h1 className="text-4xl lg:text-5xl font-extrabold mb-8 drop-shadow-lg text-center">
+        👋 Welcome, {user.Is_Anonymous ? "Valued Donor 🙏" : user.Name}!
       </h1>
 
-      <section style={styles.section}>
-        <h2>💝 Your Donations</h2>
+      {/* Donations Card */}
+      <div className="w-full max-w-4xl bg-white text-gray-800 rounded-3xl shadow-2xl p-8 mb-8 transform hover:scale-105 transition-all duration-300">
+        <h2 className="text-2xl font-bold mb-6 border-b pb-2 border-gray-200">💝 Your Donations</h2>
         {donations.length > 0 ? (
-          <ul style={styles.list}>
+          <ul className="space-y-3">
             {donations.map((d) => (
-              <li key={d.Donation_ID} style={styles.listItem}>
-                <strong>{d.Resource_Type}</strong> – {d.Quantity} Unit
-                <br />
-                <span style={styles.date}>
+              <li
+                key={d.Donation_ID}
+                className="bg-gray-50 p-4 rounded-xl shadow-md hover:shadow-lg transition-all duration-200"
+              >
+                <p className="text-lg">
+                  <strong>{d.Resource_Type}</strong> – {d.Quantity} Unit
+                </p>
+                <p className="text-sm text-gray-500">
                   Donated on: {new Date(d.Donation_Date).toLocaleDateString()}
-                </span>
+                </p>
               </li>
             ))}
           </ul>
         ) : (
-          <p style={styles.noDonations}>You haven’t made any donations yet. 💬</p>
+          <p className="text-gray-600 italic">You haven’t made any donations yet. 💬</p>
         )}
-      </section>
+      </div>
 
-      <section style={styles.buttonGroup}>
-        <button style={styles.button} onClick={() => navigate("/donate")}>
+      {/* Action Buttons */}
+      <div className="flex flex-wrap gap-6 justify-center">
+        <button
+          onClick={() => navigate("/donate")}
+          className="bg-green-500 hover:bg-green-600 px-8 py-3 rounded-2xl shadow-lg font-bold text-lg transition-transform transform hover:scale-105"
+        >
           🎁 Make a Donation
         </button>
-        <button style={styles.button} onClick={() => navigate("/donor")}>
+
+        <button
+          onClick={() => navigate("/donor")}
+          className="bg-blue-600 hover:bg-blue-700 px-8 py-3 rounded-2xl shadow-lg font-bold text-lg transition-transform transform hover:scale-105"
+        >
           🙍‍♂️ My Profile
         </button>
+
         <button
-          style={styles.logoutButton}
           onClick={() => {
             localStorage.clear();
             navigate("/");
           }}
+          className="bg-red-500 hover:bg-red-600 px-8 py-3 rounded-2xl shadow-lg font-bold text-lg transition-transform transform hover:scale-105"
         >
           🚪 Logout
         </button>
-      </section>
+                      <Link
+      to="/report"
+      className="bg-blue-600 hover:bg-blue-700 px-8 py-3 rounded-2xl shadow-lg font-bold text-lg transition-transform transform hover:scale-105"
+    >
+      📝 Submit a Report
+    </Link>
+      </div>
     </div>
   );
 };
 
 export default UserDashboard;
-
-const styles = {
-  container: {
-    maxWidth: "700px",
-    margin: "auto",
-    padding: "2rem",
-    fontFamily: "Arial, sans-serif",
-    lineHeight: 1.6,
-  },
-  heading: {
-    fontSize: "2rem",
-    marginBottom: "1rem",
-  },
-  section: {
-    marginTop: "1.5rem",
-  },
-  list: {
-    listStyleType: "none",
-    paddingLeft: 0,
-  },
-  listItem: {
-    background: "#f9f9f9",
-    padding: "10px",
-    borderRadius: "6px",
-    marginBottom: "10px",
-    boxShadow: "0 1px 3px rgba(0,0,0,0.1)",
-  },
-  date: {
-    fontSize: "0.9rem",
-    color: "#666",
-  },
-  noDonations: {
-    color: "#888",
-    fontStyle: "italic",
-  },
-  buttonGroup: {
-    marginTop: "2rem",
-    display: "flex",
-    flexWrap: "wrap",
-    gap: "10px",
-  },
-  button: {
-    padding: "10px 16px",
-    backgroundColor: "#4CAF50",
-    color: "white",
-    border: "none",
-    borderRadius: "4px",
-    cursor: "pointer",
-  },
-  logoutButton: {
-    padding: "10px 16px",
-    backgroundColor: "#e74c3c",
-    color: "white",
-    border: "none",
-    borderRadius: "4px",
-    cursor: "pointer",
-  },
-};

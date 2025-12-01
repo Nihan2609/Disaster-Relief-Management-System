@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import "./Profile.css"; 
+
 
 const Profile = () => {
   const [volunteer, setVolunteer] = useState(null);

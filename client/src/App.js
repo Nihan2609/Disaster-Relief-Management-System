@@ -7,7 +7,7 @@ import UpdateZone from "./pages/Zone/UpdateZone";
 import Volunteers from "./pages/Volunteer/Volunteers";
 import AddVolunteer from "./pages/Volunteer/AddVolunteer";
 import UpdateVolunteer from "./pages/Volunteer/UpdateVolunteer";
-
+ 
 import Requests from "./pages/Request/Requests";
 import AddRequest from "./pages/Request/AddRequest";
 
@@ -24,10 +24,12 @@ import UserProfile from "./pages/UserProfile";
 import AssignZoneInfo from "./pages/AssignZoneInfo";
 
 
+import ReportForm from "./pages/ReportForm"; 
+import Reports from "./pages/Reports"; 
 
 
-import "./style.css"
-import "./Home.css"
+import './index.css'; 
+
 import Home from "./pages/Home";
 import UserDashboard from "./pages/UserDashboard";
 import Center from "./pages/center/Center";
@@ -40,10 +42,12 @@ import UnifiedZoneManagement from "./pages/UnifiedZoneManagement";
 function App() {
   return (
     <div className="App">
-      <BrowserRouter>
+      <BrowserRouter basename="/Disaster-Relief-Management-System">
         <Routes>
           <Route path="/" element={<Login />} />
+          <Route path="/login" element={<Login />} /> 
           <Route path="/home" element={<Home />} />
+          
           <Route path="/disasterZone" element={<DisasterZones />} />
           <Route path="/addZone" element={<AddZone />} />
           <Route path="/updateZone/:Zone_ID" element={<UpdateZone />} />
@@ -54,6 +58,9 @@ function App() {
 
           <Route path="/request" element={<Requests />} />
           <Route path="/addRequest" element={<AddRequest />} />
+
+          <Route path="/report" element={<ReportForm />} />
+          <Route path="/reports" element={<Reports />} /> {/* Admin-only page */}
 
           <Route path="/resource" element={<Resources />} />
           <Route path="/addResource" element={<AddResource />} />
@@ -80,8 +87,13 @@ function App() {
 
         </Routes>
       </BrowserRouter>
+
     </div>
+    
   );
 }
+
+
+
 
 export default App;
